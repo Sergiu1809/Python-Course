@@ -1,0 +1,94 @@
+----------------------------------------------VIRTUAL ENVIRONMENTS---------------------------------------------
+
+The problem it solves
+Every project needs different libraries, sometimes different versions.
+
+Without virtual environments:
+
+Project A needs requests version 2.28
+Project B needs requests version 2.20
+
+You can only have one version installed globally - confict
+
+A virtual environment is an isolated installation per project -
+it's own libraries, its own versions, completely separate from everything else
+
+Creating and using one
+
+# Step 1 - create the virtual environment
+# Run this in your project folder: 
+python -m venv venv
+
+# "venv" is just the folder name - convention, you can name it anything
+# but everyone names it "venv"
+
+# Step 2 - activate it
+
+# Windows (CMD):
+venv\Scripts\activate
+
+# Windows (PowerShell):
+venv\Scripts\Activate.ps1
+
+# Mac/Linux:
+source venv/bin/activate
+
+# After activation your terminal shows:
+(venv) C:\your-project>   ← the (venv) prefix tells you it's active
+
+# Step 3 — install packages (only goes into THIS venv, not globally)
+pip install requests
+
+# Step 4 — deactivate when done
+deactivate
+
+
+--------------------------------------------Requirements.txt--------------------------------------------
+
+When you want to share your project or deploy it, you need a list of dependencies:
+
+# Generate it — saves all installed packages + versions
+pip freeze > requirements.txt
+
+# requirements.txt looks like this:
+requests==2.31.0
+anthropic==0.25.0
+python-dotenv==1.0.0
+
+# Someone else installs your project:
+pip install -r requirements.txt
+
+
+# `.gitignore` — never commit your venv
+# The `venv` folder is huge and machine-specific. Never push it to Git:
+
+# .gitignore
+venv/
+__pycache__/
+.env
+
+# You commit requirements.txt instead — that's enough for anyone to recreate your environment.
+
+-------------------------------------Full workflow for every new project--------------------------------
+
+# 1. Create project folder
+mkdir my_project
+cd my_project
+
+# 2. Create virtual environment
+python -m venv venv
+
+# 3. Activate it
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Mac/Linux
+
+# 4. Install what you need
+pip install requests anthropic
+
+# 5. Work on your project...
+
+# 6. Save dependencies
+pip freeze > requirements.txt
+
+# 7. Deactivate when done
+deactivate
