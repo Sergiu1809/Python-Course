@@ -2,7 +2,9 @@
 
 # Buit in modules = comes with Python ,no install needed
 
+
 from utils.math_utils import multiply
+import utils.string_utils
 import utils
 import math
 import random
@@ -47,9 +49,9 @@ print(os.listdir("."))  # list files in current directory
 
 # import from utils.py
 
-print(utils.greet("Sergiu"))  # Hello, Sergiu!
-print(utils.add(3, 5))  # 8
-print(utils.PI)  # 3.14159
+# print(utils.greet("Sergiu"))  # Hello, Sergiu!
+# print(utils.add(3, 5))  # 8
+# print(utils.PI)  # 3.14159
 
 # Or with from
 # from utils import greet, add
@@ -68,7 +70,6 @@ print(utils.PI)  # 3.14159
 
 # __init__.py can be empty - it just tells Python "this folder is a package".
 
-# from utils.math_utils import multiply
 
 print(multiply(3, 4))  # 12
 
@@ -87,3 +88,6 @@ print(multiply(3, 4))  # 12
 # │   ├── __init__.py   ← this makes it a package, package wins
 # │   ├── math_utils.py
 # │   └── string_utils.py
+
+text = "hello world"
+print(utils.string_utils.capitalize_words(text))  # Hello World

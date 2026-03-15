@@ -14,6 +14,6 @@ if __name__ == "__main__":
     print("Testing greet:")
     print(greet("Sergiu"))
 
-# Think of it as a "tun rhis only if I'm the one being executed" check.
+# Think of it as a "run this only if I'm the one being executed" check.
 # In real projects every file that has test/demo code at the bottom should
 # have this guard - otherwisw importing it anywhere creates unwanted side effects
