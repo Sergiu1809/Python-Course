@@ -4,7 +4,6 @@ import anthropic
 # You're importing one specific function — `load_dotenv` — from the `python-dotenv` library you installed.
 # This function's only job is to find your `.env` file and read it.
 from dotenv import load_dotenv
-import os
 
 # This actually **executes** that function. When it runs it:
 # 1. looks for a `.env` file in your current folder
