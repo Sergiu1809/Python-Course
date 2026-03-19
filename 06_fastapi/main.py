@@ -28,6 +28,8 @@ app = FastAPI()
 # @app.get("/")
 # This is a decorator — it tells FastAPI "when someone sends a GET request to the / path, run this function".
 
+# run "uvicorn 06_fastapi.main:app --reload" in terminal
+
 
 @app.get("/")
 def home():
