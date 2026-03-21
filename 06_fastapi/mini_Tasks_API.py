@@ -59,9 +59,15 @@ def delete_task(task_id: int):
             return {"message": "Task_deleted"}
     raise HTTPException(status_code=404, detail="Task not found")
 
+# What HTTPException is
+# raise HTTPException(status_code=404, detail="Task not found")
+# This is how you return errors in FastAPI. Instead of returning a normal response you raise an exception with a status code and message.
+#  FastAPI catches it and returns the proper HTTP error response automatically.
+
+
 # The real world flow - step by step
 
-# Let's say you're building a Todo app. Auser adds a task:
+# Let's say you're building a Todo app. A user adds a task:
 
 # 1. User types "Buy groceries" in React and clicks Add
 
