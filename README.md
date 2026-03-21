@@ -6,5 +6,5 @@ Progress
 -  OOP Exercises
 -  Modules & Virtual Environments  
 -  API Calls
--  LLM APIs (in progress)
--  FastAPI (next)
+-  LLM APIs
+-  FastAPI
