@@ -49,5 +49,44 @@ def correct(s):
     return result
 
 
-text = 'L0NDON'
-print(correct(text))
+# text = 'L0NDON'
+# print(correct(text))
+
+def solution(text, ending):
+    substr = ''
+    for i in range(len(text)-len(ending), len(text)):
+        substr += text[i]
+    for i in range(len(substr)):
+        if (substr[i] != ending[i]):
+            return False
+    return True
+    # a lot easier: return text.endswith(ending)
+
+
+# text = 'abc'
+# ending = 'bc'
+# print(solution(text, ending))
+
+def digitize(n):
+    stack = []
+    while (n != 0):
+        r = n % 10
+        stack.append(r)
+        n = n // 10
+    return stack
+
+
+# n = 13245
+# print(digitize(n))
+
+def find_short(s):
+    list = s.split()
+    shortest = len(list[0])
+    for s in list:
+        if (len(s) < shortest):
+            shortest = len(s)
+    return shortest
+
+
+s = "hello my friend"
+print(find_short(s))
