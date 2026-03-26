@@ -115,4 +115,33 @@ def count_sheep(n):
     return ''.join(f"{x} sheep..." for x in range(1, n+1))
 
 
-print(count_sheep(3))
+# print(count_sheep(3))
+
+
+def remove_exclamation_marks(s):
+    new_string = ''
+    for char in s:
+        if (char != '!'):
+            new_string += char
+    return new_string
+
+
+def remove_exclamation_marksv2(s):
+    return s.replace('!', '')
+
+
+# s = 'Salut!Ce'
+# print(remove_exclamation_marksv2(s))
+
+
+# s = [13, 234, 2]
+# print(sum(s))
+
+def reverse_seq(n):
+    arr = []
+    for i in range(1, n+1):
+        arr.append(i)
+    return arr.reverse()
+
+
+print(reverse_seq(5))
