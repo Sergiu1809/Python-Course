@@ -88,5 +88,31 @@ def find_short(s):
     return shortest
 
 
-s = "hello my friend"
-print(find_short(s))
+# s = "hello my friend"
+# print(find_short(s))
+
+def powers_of_two(n):
+    result = []
+    for i in range(n+1):
+        result.append(2**i)
+    return result
+
+
+# print(powers_of_two(3))
+
+def str_count(string, letter):
+    count = 0
+    for char in string:
+        if (char == letter):
+            count += 1
+    return count
+
+
+# print(str_count('', 'l'))
+
+
+def count_sheep(n):
+    return ''.join(f"{x} sheep..." for x in range(1, n+1))
+
+
+print(count_sheep(3))
