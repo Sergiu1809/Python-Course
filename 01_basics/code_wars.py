@@ -144,4 +144,8 @@ def reverse_seq(n):
     return arr.reverse()
 
 
-print(reverse_seq(5))
+# print(reverse_seq(5))
+
+a = 'anc'
+a = a.upper()
+print(a)
