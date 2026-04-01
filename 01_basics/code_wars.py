@@ -146,6 +146,47 @@ def reverse_seq(n):
 
 # print(reverse_seq(5))
 
-a = 'anc'
-a = a.upper()
-print(a)
+# a = 'anc'
+# a = a.upper()
+# print(a)
+
+# a = 'abc'
+# print('*'.join(a))
+
+
+def get_count(sentence):
+    vowels = 'aeiou'
+    count = 0
+    for char in sentence:
+        if char in vowels:
+            count += 1
+    return count
+
+
+def greet(language):
+    database = [("english", "Welcome"), ("czech", "Vitejte"), ("danish", "Velkomst"), ("dutch", "Welkom"), ("estonian", "Tere tulemast"), ("finnish", "Tervetuloa"), ("flemish", "Welgekomen"), ("french", "Bienvenue"), ("german", "Willkommen"), ("irish", "Failte"), ("italian", "Benvenuto"), ("latvian", "Gaidits"), ("lithuanian", "Laukiamas"), ("polish", "Witamy"), ("spanish", "Bienvenido"), ("swedish", "Valkommen"), ("welsh", "Croeso")
+                ]
+
+    for lang, word in database:
+        if (language == lang):
+            return word
+    return 'Welcome'
+
+
+# a = 'a'
+# print(2*a)
+
+def dig_pow(n, p):
+    sum = 0
+    str_n = str(n)
+    for i in range(0, len(str_n)):
+        sum += int(str_n[i]) ** p
+        p += 1
+    if (sum % n == 0):
+        k = sum / n
+        return k
+    else:
+        return -1
+
+
+print(dig_pow(46278, 3))
