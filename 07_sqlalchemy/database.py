@@ -28,10 +28,18 @@ Base = declarative_base()
 # Dependancy - gives each endpoint its own database session
 # automatically closes it when the request is done
 
+# A session is a temporary workspace between your code and the database. Think of it like opening a Google Doc:
+
+# you open it
+# make your changes
+# save and close it
+
 
 def get_db():
     db = SessionLocal()
     try:
-        yield db
-    finally:
+        # yield — gives value and PAUSES the function
+        # resumes after the endpoint finishes
+        yield db  # Yield pauses a function's execution and returns a value temporarily
+    finally:  # finally always runs — even if the endpoint crashes with an error:
         db.close()
