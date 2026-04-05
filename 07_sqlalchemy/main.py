@@ -69,3 +69,136 @@ class TaskCreate(BaseModel):
 
 # Notice UserCreate han no id - that's correct because the database generates it
 # automatically. You'd never ask the user to send an id when creating something.
+
+
+# Depends(get_db) - dependency injection
+# Depends(get_db) tells FastAPI:
+# 1. before running create_user, call get_db()
+# 2. take what get_db() yields(the session)
+# 3. pass it as the db parameter
+# 4. after create_user finishes, resume get_db() to close the session
+# So every endpoint that needs database access just adds
+# db: Session = Depends(get_db) amd gets a fresh session automatically.
+# You never manually open or close sessions.
+
+# receives UserCreate data from request body
+# gets database session via Depends
+@app.post("/users")
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    new_user = models.User(
+        name=user.name,
+        email=user.email,
+        age=user.age,
+        city=user.city
+    )
+    # Creates a SQLAlchemy User object in Python memory - not saved to database yet
+    db.add(new_user)
+    # Tells the session "track this object, prepare to save it" - still not saved.
+    db.commit()
+    # Now it saves to PostgreSQL. This is the equivalent of INSERT INTO users ...
+    db.refresh(new_user)
+    # After commit, new_user in Python doesn't have the id yet - the database
+    # generated it but Python doesn't know about it. refresh() fetches the latest
+    # data from PostgreSQL back into the object, giving you the auto-generated id.
+    # FastAPI serializes the SQLAlchemy object to JSON
+    # and sends it back.
+    return new_user
+
+
+@app.get("/users")  # get_user endpoint
+def get_users(db: Session = Depends(get_db)):
+    return db.query(models.User).all()
+# db.query(models.User) - SQLAlchemy equivalent of SELECT * FROM users.all() -
+# fetch all results as a list
+# Other options:
+# .all() returns list of all matches
+# .first() returns first match or None
+# .filter(...) # adds Where clause
+# .count() # returns number of matches
+
+
+@app.get("/users/{user_id}")
+def get_user(user_id: int, db: Session = Depends((get_db))):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+# db.query(models.User).filter(models.User.id == user_id).first()
+# This translates to:
+# SELECT * FROM users WHERE id = user_id LIMIR 1;
+# .filter() is the Python equivalent of WHERE.
+# .filter() returns the object or None if not found - thats why you chech
+# if not user and raise a 404.
+
+
+@app.post("/tasks")
+def create_task(task: TaskCreate, db: Session = Depends(get_db)):
+    new_task = models.Task(
+        title=task.title,
+        description=task.description,
+        user_id=task.user_id
+    )
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)
+    return new_task
+
+
+@app.get("/tasks")
+def get_tasks(db: Session = Depends(get_db)):
+    return db.query(models.Task).all()
+
+
+@app.put("/tasks/{task_id}/completed")
+def complete_task(task_id: int, db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    task.completed = True
+    db.commit()
+    db.refresh(task)
+# Notice how natural this is - you fetch the object, change its attribute like
+# normal Python, then commit. SQLAlchemy detects the change automatically
+# and generates the UPDATE SQL:
+# task.completed = True # Python change
+# db.commit() # SQLAlchemy generates: UPDATE tasks SET completed = true WHERE id=x
+
+
+@app.delete("/tasks/{task_id}")
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    db.delete(task)
+    db.commit()
+    return {"message": "Task deleted"}
+
+# db.delete(task) marks the object for deletion. db.commit() executes the DELETE FROM tasks
+# WHERE id=x in PostgreSQL.
+
+# The session workflow — always the same pattern
+# Every endpoint that writes to the database follows this exact pattern:
+
+# # CREATE
+# obj = models.Something(...)
+# db.add(obj)
+# db.commit()
+# db.refresh(obj)
+# return obj
+
+# # READ
+# obj = db.query(models.Something).filter(...).first()
+# return obj
+
+# # UPDATE
+# obj = db.query(models.Something).filter(...).first()
+# obj.field = new_value
+# db.commit()
+# db.refresh(obj)
+# return obj
+
+# # DELETE
+# obj = db.query(models.Something).filter(...).first()
+# db.delete(obj)
+# db.commit()
+# return {"message": "deleted"}
