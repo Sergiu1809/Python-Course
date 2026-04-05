@@ -189,4 +189,9 @@ def dig_pow(n, p):
         return -1
 
 
-print(dig_pow(46278, 3))
+# print(dig_pow(46278, 3))
+
+# a = [1, 2]
+# b = [1, 2]
+
+# print(a == b, a is b)
