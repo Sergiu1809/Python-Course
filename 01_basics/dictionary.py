@@ -11,6 +11,7 @@ print(dictionary["price"])
 print(dictionary["stock"])
 
 dictionary["price"] = 20
+dictionary["price"] += 100
 
 print(dictionary["price"])
 

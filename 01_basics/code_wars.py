@@ -195,3 +195,23 @@ def dig_pow(n, p):
 # b = [1, 2]
 
 # print(a == b, a is b)
+
+def sum_two_smallest_numbers(numbers):
+    numbers.sort()
+    return numbers[0] + numbers[1]
+
+
+def sum_two_smallest_numbers(numbers):
+    nr1 = min(numbers)
+    numbers.remove(nr1)
+    nr2 = min(numbers)
+    return nr1 + nr2
+
+
+# s = "GeeksforGeeks"
+
+# rev = ""
+# for ch in s:
+#     rev = ch + rev
+
+# print(rev)
