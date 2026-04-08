@@ -30,7 +30,7 @@ from database import Base
 
 class User(Base):
     # __tablename__ special attribute recognized by SQLAlchemy
-    # it tells the ORM: 'the database is named users'
+    # it tells the ORM(Object Relational Mapping): 'the database is named users'
     # without it: SQLAlchemy would try to guess the table name
     # __tablename__ = "users" - this is the actual table name in PostgreSQL.
     # The class is called User (singular, capital) but the table is called users

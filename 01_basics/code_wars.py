@@ -215,3 +215,10 @@ def sum_two_smallest_numbers(numbers):
 #     rev = ch + rev
 
 # print(rev)
+
+st = "acc"
+result = []
+for i in range(len(st)):
+    result.append(st[i].upper() + st[i] * i)
+print(result)
+print('-'.join(result))
