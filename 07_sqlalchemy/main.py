@@ -1,11 +1,11 @@
 # Depends - This is FastAPI's dependency injection system. It lets you say
-# "before running this endpoint, run thi function and give me the result".
+# "before running this endpoint, run this function and give me the result".
 # You'll use it to inject the database session into every endpoint.
 from fastapi import FastAPI, HTTPException, Depends
 # Session is the type  hint for the database session object. You use it to tell
 # Python (and your IDE) what type db is:
 # def create_user (db: Session): <- db is a SQLAlchemy Session
-# Without this type hint your code worls but your IDE won't give you autocomplete
+# Without this type hint your code works but your IDE won't give you autocomplete
 # on db methods.
 from sqlalchemy.orm import Session
 # defines the shape of incoming request data
