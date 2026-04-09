@@ -1,0 +1,73 @@
+JWT Authentification
+
+JWT stands for JSON Web Token. It's a way to prove who you are to an API
+without sending your password every time.
+
+The problem it solves:
+
+Without auth, anyone can call your API:
+GET /tasks  -> returns ALL users tasks
+DELETE /tasks/5 -> anyone can delete anything
+
+With JWT Authentification:
+GET /tasks -> "show me your token first"
+           -> valid token -> returns YOUR tasks 
+           -> no token -> 401 Unauthorized
+
+How it works - the full flow:
+
+1. REGISTER
+User sends name + email + password
+-> server hashes the password
+-> saves user to database
+-> returns success
+
+2.LOGIN 
+User sends email + password
+-> server checks password against hash
+-> if correct -> generate a JWT token
+-> returns the token to the user
+
+3. PROTECTED REQUEST
+User sends request + token in header
+-> server verifies the token
+-> if valid -> processes the request
+-> if invalid/expired -> 401 Unauthorized
+
+What is a JWT token?
+It's a long string split into 3 parts separated by dots:
+
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTZXJnaXUifQ.abc123xyz
+        ↑                     ↑                 ↑
+    header                  Payload           Signature
+
+Header - says which algorithm was used to sign in 
+Payload - contains data about user:
+{
+    "sub": "Sergiu",
+    "id": 1,
+    "exp": 1234567890
+}
+Signature - a cryptographic hash that proves the token wasn't tampered with.
+Generated using a secret key only your server knows.
+
+IMPORTANT - JWT is NOT encrypted
+
+The paylaod is just base64 encoded - anyone can decode it and read it. Never
+put sensitive data like passwords in a JWT.
+
+What makes it secure is the signature - if someone changes the payload,
+the signature breaks and your server rejects it.
+
+What is password hashing?
+You never store passwords as plain text in a database. If someone hacks
+your database they'd see everyone's passwords.
+
+Instead you store a hash - a one-way transformation:
+"mypassword123" -> bcrypt "$2b$12$abcxyz..." (can't reverse this)
+
+When user logs in:
+"mypassword123"  →  bcrypt  →  "$2b$12$abcxyz..."
+                                   ↕ compare
+                            "$2b$12$abcxyz..."  ← stored hash
+                                match -> login success
