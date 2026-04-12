@@ -91,7 +91,7 @@ class UserResponse(BaseModel):
 
 
 class Token(BaseModel):
-    acces_token: str  # the JWT token string
+    access_token: str  # the JWT token string
     # looks like: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTZXJnaXUifQ.abc123"
     # client stores this and sends it with every protected request
 
@@ -129,3 +129,90 @@ def get_current_user(
         raise credentials_exception
 
     return user  # returns the full User object to the endpoint
+
+# ── Auth endpoints ────────────────────────────────────────────
+
+# response_model = UserResponse
+# This tells FastAPI: "filter the response through this Pydantic model before
+# sending it back"
+# Notice UserResponse has no password or hashed_password field - so even though your
+# User object has hashed_password, it never gets sent back to the client.
+# This prevents accidentally leaking sensitive data.
+
+
+@app.post("/register", response_model=UserResponse)
+def register(user: UserCreate, db: Session = Depends(get_db)):
+    # Check if email already exists
+    existing_user = db.query(models.User).filter(
+        models.User.email == user.email).first()
+
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+
+    # Hash the password before saving - never store plain text
+    new_user = models.User(
+        name=user.name,
+        email=user.email,
+        hashed_password=auth.hash_password(user.password)
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+
+@app.post("/login", response_model=Token)
+def login(
+    # This is a special FastAPI form that expects username and password fields
+    # It's standard OAUTH2login format. We use form_data.username as the email
+    # and form_data.password as the password
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    user = db.query(models.User).filter(
+        models.User.email == form_data.username).first()
+
+    # Check if user exists AND password is correct
+    if not user or not auth.verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW.Authenticate": "Bearer"},
+        )
+
+    # Generate JWT token with email as the subject
+    access_token = auth.create_access_token(data={"sub": user.email})
+
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# ── Protected endpoints ───────────────────────────────────────
+
+# This is how you protect any endpoint. Just add Depends(get_current_user)
+# as a parameter and FastAPI:
+# 1. reads the token from the request header
+# 2. calls get_current_user
+# 3. returns the user object
+# 4. if anything fails -> automatically returns 401
+
+
+@app.get("/me", response_model=UserResponse)
+def get_me(current_user: models.User = Depends(get_current_user)):
+    # Depends(get_current_user) runs get_current_user first
+    # if token is valid -> returns the user object
+    # if token is invalid -> raises 401 automatically
+    # current_user is the logged in user object
+    return current_user
+
+
+@app.get("/users", response_model=list[UserResponse])
+def get_users(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)  # protected
+):
+    # current_user parameter protects this endpoint
+    # you must be logged in to see all users
+    return db.query(models.User).all()
