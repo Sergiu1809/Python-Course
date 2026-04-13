@@ -17,7 +17,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-SECRET_KEY = os.environ.get("SECRET_KEY ")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 ALGORITHM = "HS256"
 
@@ -45,7 +45,5 @@ def verify_access_token(token: str) -> str:
 
         if email is None:
             raise JWTError
-
-        return email
     except JWTError:
         raise JWTError
