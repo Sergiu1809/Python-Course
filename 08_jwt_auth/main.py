@@ -48,7 +48,7 @@ app = FastAPI()
 # Tells FastAPI where the login endpoint is
 # When a protected endpoint is called without a token
 # FastAPI knows to redirect to "/login" to get one
-oaut2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 # ── Pydantic schemas ──────────────────────────────────────────
@@ -104,7 +104,7 @@ class Token(BaseModel):
 # ── Dependency — get current logged in user ───────────────────
 
 def get_current_user(
-    token: str = Depends(oaut2_scheme),
+    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ):
     # This function runs on every protected endpoint
