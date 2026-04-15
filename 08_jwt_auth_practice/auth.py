@@ -45,5 +45,8 @@ def verify_access_token(token: str) -> str:
 
         if email is None:
             raise JWTError
+
+        return email
+
     except JWTError:
         raise JWTError

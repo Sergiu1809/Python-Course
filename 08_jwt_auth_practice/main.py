@@ -42,7 +42,7 @@ def get_current_user(
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        headers={"WWW-Authenticate": "Bearer"}
     )
 
     try:
@@ -73,7 +73,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     new_user = models.User(
         name=user.name,
         email=user.email,
-        password=auth.hash_password(user.password)
+        hashed_password=auth.hash_password(user.password)
     )
 
     db.add(new_user)
@@ -91,10 +91,11 @@ def login(
     user = db.query(models.User).filter(
         models.User.email == form_data.username).first()
 
-    if user is None or auth.verify_password(form_data.password, user.hashed_password):
+    if user is None or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password"
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"}
         )
 
     access_token = auth.create_access_token(data={"sub": user.email})
@@ -108,5 +109,5 @@ def get_me(current_user: models.User = Depends(get_current_user)):
 
 
 @app.get("/users", response_model=list[UserResponse])
-def get_users(current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     return db.query(models.User).all()
